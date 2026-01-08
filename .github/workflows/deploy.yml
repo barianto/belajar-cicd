@@ -9,40 +9,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # - name: Deploy to Server via SSH
-      #   uses: appleboy/ssh-action@v1.0.0
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USER }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       cd /var/www/html/belajar-cicd
-      #       git pull origin main
-
-
-      - name: Create SSH key file
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private.key
-          chmod 400 private.key # Only owner can read
-
-      - name: Add key to SSH agent and run commands
-        run: |
-          eval `ssh-agent -s` # Start SSH agent
-          ssh-add private.key # Add the key
-
-      - name: Deploy to Server
-        env:
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          APP_DIR: ${{ secrets.APP_DIR }}
-        run: |
-          ssh $SERVER_USER@$SERVER_IP "
-          cd $APP_DIR &&
-          git pull origin main
-          "
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ${{ secrets.APP_DIR }}
+            git pull origin main
