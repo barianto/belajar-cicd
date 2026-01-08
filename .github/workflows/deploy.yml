@@ -29,12 +29,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret contains the new private key
 
-      - name: Add known hosts
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
 
       - name: Deploy to Server
         env:
@@ -42,7 +36,7 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           APP_DIR: ${{ secrets.APP_DIR }}
         run: |
-          ssh $SERVER_USER@$SERVER_IP "
+          ssh $SERVER_USER@$SERVER_IP 'ls -l'"
           cd $APP_DIR &&
           git pull origin main
           "
