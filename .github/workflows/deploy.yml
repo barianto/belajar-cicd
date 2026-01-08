@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Server via SCP
+      - name: Deploy to Server via SCP - ${{ secrets.SERVER_HOST }} - ${{ secrets.SERVER_USER }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
