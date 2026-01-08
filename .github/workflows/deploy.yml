@@ -24,11 +24,17 @@ jobs:
       #       git pull origin main
 
 
-      - name: Add SSH private key to agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret contains the new private key
+      - name: Create SSH key file
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private.key
+          chmod 400 private.key # Only owner can read
 
+      - name: Add key to SSH agent and run commands
+        run: |
+          eval `ssh-agent -s` # Start SSH agent
+          ssh-add private.key # Add the key
 
       - name: Deploy to Server
         env:
@@ -36,7 +42,7 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           APP_DIR: ${{ secrets.APP_DIR }}
         run: |
-          ssh $SERVER_USER@$SERVER_IP 'ls -l'"
+          ssh $SERVER_USER@$SERVER_IP "
           cd $APP_DIR &&
           git pull origin main
           "
