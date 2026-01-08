@@ -35,7 +35,7 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           APP_DIR: ${{ secrets.APP_DIR }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP "
+          ssh $SERVER_USER@$SERVER_IP "
           cd $APP_DIR &&
           git pull origin main
           "
