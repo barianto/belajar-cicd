@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy to Server VPS
 
 on:
   push:
@@ -8,15 +8,22 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          debug: true
-          script: |
-            cd ${{ secrets.APP_DIR }}
-            git pull origin main
+    - name: Checkout repository
+      uses: actions/checkout@v4 # Action to checkout the code
+
+    - name: Deploy using SSH
+      uses: appleboy/ssh-action@v0.1.7 # Action to execute SSH commands
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /var/www/html/belajar-cicd # Navigate to your project directory on the server
+          git fetch origin
+          git checkout main
+          git pull origin main # Pull the latest changes from the main branch
+          # Optional: Add post-deployment commands (e.g., install dependencies, restart services)
+          # npm install
+          # pm2 restart my-application
